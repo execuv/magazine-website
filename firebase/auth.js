@@ -5,9 +5,6 @@ import {
   signInWithPopup,
   signOut,
   sendPasswordResetEmail,
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink
 } from 'firebase/auth'
 import { auth } from './firebase'
 
@@ -60,35 +57,5 @@ export const sendPasswordReset = async (email) => {
   } catch (error) {
     return { error: error.message };
   }
-};
-
-// Email Link Authentication
-export const sendEmailVerificationLink = async (email) => {
-  const actionCodeSettings = {
-    url: 'http://localhost:3000/auth/verify-email',
-    handleCodeInApp: true
-  };
-
-  try {
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-    window.localStorage.setItem('emailForSignIn', email);
-    return { error: null };
-  } catch (error) {
-    return { error: error.message };
-  }
-};
-
-export const signInWithEmail = async (email, link) => {
-  try {
-    const result = await signInWithEmailLink(auth, email, link);
-    window.localStorage.removeItem('emailForSignIn');
-    return { user: result.user, error: null };
-  } catch (error) {
-    return { user: null, error: error.message };
-  }
-};
-
-export const isEmailLink = (link) => {
-  return isSignInWithEmailLink(auth, link);
 };
 

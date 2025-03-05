@@ -7,11 +7,12 @@ import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/authContext"
 import { toast } from "sonner"
+import { logout } from "@/firebase/auth"
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
-  const { userLoggedIn, logout } = useAuth()
+  const { userLoggedIn } = useAuth()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)

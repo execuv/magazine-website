@@ -49,7 +49,7 @@ export default function LoginPage() {
       }
       toast.success("Successfully logged in!")
       router.push("/") // Redirect to dashboard page
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message || "Failed to login")
     } finally {
       setIsLoading(false)
@@ -65,7 +65,7 @@ export default function LoginPage() {
       }
       toast.success("Successfully logged in with Google!")
       router.push("/") // Redirect to dashboard page
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message || "Failed to login with Google")
     } finally {
       setIsGoogleLoading(false)

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Icons } from "@/components/ui/icons"
-import { registerWithEmailAndPassword, signInWithGoogle, sendEmailVerificationLink } from "@/firebase/auth"
+import { registerWithEmailAndPassword, signInWithGoogle } from "@/firebase/auth"
 import { useAuth } from "@/authContext"
 
 interface SignUpFormData {
@@ -26,7 +26,7 @@ export default function SignUpPage() {
 
   useEffect(() => {
     if (currentUser) {
-      router.push('/')
+      router.push("/")
     }
   }, [currentUser, router])
 
@@ -40,17 +40,15 @@ export default function SignUpPage() {
   const onSubmit = async (data: SignUpFormData) => {
     setIsLoading(true)
     try {
-      // First send verification email
-      const { error: linkError } = await sendEmailVerificationLink(data.email)
-      if (linkError) throw new Error(linkError)
-
-      toast.success(
-        "Verification email sent! Please check your inbox and click the verification link. You'll be automatically logged in after verification.",
-        {
-          duration: 6000,
-        }
+      const { user, error } = await registerWithEmailAndPassword(
+        data.email,
+        data.password
       )
-    } catch (error) {
+      if (error) throw new Error(error)
+
+      toast.success("Account created successfully!")
+      router.push("/")
+    } catch (error: any) {
       toast.error(error.message || "Failed to create account")
     } finally {
       setIsLoading(false)
@@ -66,7 +64,7 @@ export default function SignUpPage() {
       }
       toast.success("Successfully signed up with Google!")
       router.push("/")
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message || "Failed to sign up with Google")
     } finally {
       setIsGoogleLoading(false)
@@ -103,7 +101,9 @@ export default function SignUpPage() {
                 placeholder="name@example.com"
               />
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -146,7 +146,11 @@ export default function SignUpPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isLoading || isGoogleLoading}
+            >
               {isLoading && (
                 <Icons.loader className="mr-2 h-4 w-4 animate-spin" />
               )}
