@@ -1,92 +1,123 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { Star } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Magazine, getMagazineById } from "@/app/utils/firestore"
+import { useCart } from "@/context/CartContext"
+import { useAuth } from "@/authContext"
+import { toast } from "sonner"
 
-interface MagazineDetails {
-  id: number
-  title: string
-  description: string
-  price: number
-  coverImage: string
-  rating: number
-  author: string
-  publicationDate: string
-  pageCount: number
-  language: string
-  isbn: string
-}
+export default function MagazineDetailPage({
+  params,
+}: {
+  params: { slug: string }
+}) {
+  const [magazine, setMagazine] = useState<Magazine | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const { addItem } = useCart()
+  const { userLoggedIn } = useAuth()
 
-export default function MagazineDetailPage({ params }: { params: { slug: string } }) {
-  // In a real application, you would fetch this data based on the slug
-  const magazine: MagazineDetails = {
-    id: 1,
-    title: "Design Insights: Summer 2025 Edition",
-    description:
-      "Dive into the latest trends and innovations in design with our Summer 2025 edition. Featuring exclusive interviews with leading designers, in-depth analysis of emerging technologies, and showcases of groundbreaking projects from around the world.",
-    price: 14.99,
-    coverImage: "/placeholder.svg?height=600&width=400",
-    rating: 4.5,
-    author: "Sarah Johnson",
-    publicationDate: "June 1, 2025",
-    pageCount: 120,
-    language: "English",
-    isbn: "978-1234567890",
+  useEffect(() => {
+    const fetchMagazine = async () => {
+      try {
+        const data = await getMagazineById(params.slug)
+        if (!data) {
+          setError("Magazine not found")
+          return
+        }
+        setMagazine(data)
+      } catch (err) {
+        setError("Failed to fetch magazine")
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMagazine()
+  }, [params.slug])
+
+  const handleAddToCart = async () => {
+    if (!userLoggedIn) {
+      toast.error("Please login to add items to cart")
+      return
+    }
+    try {
+      await addItem(params.slug)
+      toast.success("Added to cart")
+    } catch (error) {
+      toast.error("Failed to add to cart")
+    }
   }
+
+  if (loading)
+    return <div className="py-16 text-center">Loading magazine...</div>
+  if (error)
+    return <div className="py-16 text-center text-red-500">{error}</div>
+  if (!magazine) return null
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid gap-8 md:grid-cols-2">
         <div className="space-y-4">
           <img
-            src={magazine.coverImage || "/placeholder.svg"}
-            alt={magazine.title}
+            src={magazine.image || "/placeholder.svg"}
+            alt={magazine.name}
             className="w-full max-w-md rounded-lg shadow-lg"
             width={400}
             height={600}
           />
-          <div className="flex items-center space-x-2">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`h-5 w-5 ${i < Math.floor(magazine.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+          <div className="grid grid-cols-2 gap-2">
+            {magazine.previewImage?.map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt={`Preview ${idx + 1}`}
+                className="w-full rounded-lg cursor-pointer hover:opacity-80"
+                width={200}
+                height={300}
               />
             ))}
-            <span className="text-sm text-muted-foreground">({magazine.rating.toFixed(1)})</span>
           </div>
         </div>
         <div className="space-y-4">
-          <h1 className="text-3xl font-bold">{magazine.title}</h1>
-          <p className="text-xl font-semibold">${magazine.price.toFixed(2)}</p>
+          <h1 className="text-3xl font-bold">{magazine.name}</h1>
+          <p className="text-xl font-semibold">
+            ${(magazine.price / 100).toFixed(2)}
+          </p>
           <p className="text-muted-foreground">{magazine.description}</p>
           <div className="space-y-2">
             <p>
-              <span className="font-semibold">Author:</span> {magazine.author}
+              <span className="font-semibold">Brand:</span> {magazine.brand}
             </p>
             <p>
-              <span className="font-semibold">Publication Date:</span> {magazine.publicationDate}
+              <span className="font-semibold">Publication Date:</span>{" "}
+              {magazine.publicationDate}
             </p>
             <p>
-              <span className="font-semibold">Page Count:</span> {magazine.pageCount}
+              <span className="font-semibold">Page Count:</span>{" "}
+              {magazine.pageCount}
             </p>
             <p>
-              <span className="font-semibold">Language:</span> {magazine.language}
+              <span className="font-semibold">Language:</span>{" "}
+              {magazine.language}
             </p>
             <p>
-              <span className="font-semibold">ISBN:</span> {magazine.isbn}
+              <span className="font-semibold">Category:</span>{" "}
+              {magazine.category}
             </p>
           </div>
           <div className="space-x-4">
-            <Button size="lg">Add to Cart</Button>
+            <Button size="lg" onClick={handleAddToCart}>
+              Add to Cart
+            </Button>
             <Button size="lg" variant="outline">
               Add to Wishlist
             </Button>
           </div>
         </div>
       </div>
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-4">Related Magazines</h2>
-        {/* Add related magazines component here */}
-      </div>
     </div>
   )
 }
-

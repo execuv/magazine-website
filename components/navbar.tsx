@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/authContext"
 import { toast } from "sonner"
 import { logout } from "@/firebase/auth"
+import CartButton from "@/components/cart-button"
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -32,7 +33,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="py-2 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="px-4 lg:px-6 h-14 flex items-center border-b">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center space-x-2">
@@ -84,21 +85,24 @@ export default function Navbar() {
           >
             Contact
           </Link>
-          {userLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-            >
-              Logout
-            </button>
-          ) : (
-            <Link
-              href="auth/login"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-            >
-              Login
-            </Link>
-          )}
+          <div className="flex items-center gap-4">
+            <CartButton />
+            {userLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                href="auth/login"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+              >
+                Login
+              </Link>
+            )}
+          </div>
         </nav>
 
         {/* Mobile Menu Button */}

@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import { Toaster } from "sonner"
 import { AuthProvider } from "@/authContext"
+import { CartProvider } from "@/context/CartContext"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -27,12 +28,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          <Toaster position="top-center" />
+          <CartProvider>
+            <div className="min-h-screen flex flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <Toaster position="top-center" />
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

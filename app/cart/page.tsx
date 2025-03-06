@@ -1,53 +1,110 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Trash2 } from "lucide-react"
 import Link from "next/link"
+import { useCart } from "@/context/CartContext"
+import { useAuth } from "@/authContext"
+import { Magazine, getMagazineById } from "@/app/utils/firestore"
+import { toast } from "sonner"
 
-interface CartItem {
-  id: number
-  title: string
-  price: number
+interface CartItemWithDetails extends Magazine {
   quantity: number
-  coverImage: string
 }
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      title: "Design Insights: Summer 2025 Edition",
-      price: 14.99,
-      quantity: 1,
-      coverImage: "/placeholder.svg?height=150&width=100",
-    },
-    {
-      id: 2,
-      title: "Tech Trends: AI Revolution",
-      price: 12.99,
-      quantity: 2,
-      coverImage: "/placeholder.svg?height=150&width=100",
-    },
-  ])
+  const { cartItems, removeItem, isLoading: isCartLoading } = useCart()
+  const { userLoggedIn } = useAuth()
+  const [items, setItems] = useState<CartItemWithDetails[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const updateQuantity = (id: number, newQuantity: number) => {
-    setCartItems(cartItems.map((item) => (item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item)))
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        if (!userLoggedIn) {
+          setError("Please login to view your cart")
+          setLoading(false)
+          return
+        }
+
+        const itemsWithDetails = await Promise.all(
+          cartItems.map(async (item) => {
+            const magazine = await getMagazineById(item.magazineId)
+            if (!magazine) return null
+            return {
+              ...magazine,
+              quantity: item.quantity,
+            }
+          })
+        )
+
+        setItems(
+          itemsWithDetails.filter(
+            (item): item is CartItemWithDetails => item !== null
+          )
+        )
+      } catch (err) {
+        setError("Failed to fetch cart items")
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCartItems()
+  }, [cartItems, userLoggedIn])
+
+  const handleRemoveItem = async (magazineId: string) => {
+    try {
+      await removeItem(magazineId)
+      toast.success("Item removed from cart")
+    } catch (error) {
+      toast.error("Failed to remove item")
+    }
   }
 
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter((item) => item.id !== id))
+  if (!userLoggedIn) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <h1 className="text-3xl font-bold mb-4">Please Login</h1>
+        <p className="mb-4">You need to be logged in to view your cart</p>
+        <Button asChild>
+          <Link href="/login">Login</Link>
+        </Button>
+      </div>
+    )
   }
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const tax = subtotal * 0.1 // Assuming 10% tax
+  if (loading || isCartLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        Loading cart...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center text-red-500">
+        {error}
+      </div>
+    )
+  }
+
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  )
+  const tax = subtotal * 0.1
   const total = subtotal + tax
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
-      {cartItems.length === 0 ? (
+      {items.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-xl mb-4">Your cart is empty</p>
           <Button asChild>
@@ -57,33 +114,30 @@ export default function CartPage() {
       ) : (
         <div className="grid gap-8 md:grid-cols-3">
           <div className="md:col-span-2 space-y-4">
-            {cartItems.map((item) => (
-              <div key={item.id} className="flex items-center space-x-4 border-b pb-4">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center space-x-4 border-b pb-4"
+              >
                 <img
-                  src={item.coverImage || "/placeholder.svg"}
-                  alt={item.title}
+                  src={item.image}
+                  alt={item.name}
                   className="w-24 h-36 object-cover rounded"
                 />
                 <div className="flex-grow">
-                  <h3 className="font-semibold">{item.title}</h3>
-                  <p className="text-muted-foreground">${item.price.toFixed(2)}</p>
-                  <div className="flex items-center mt-2">
-                    <Button variant="outline" size="sm" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
-                      -
-                    </Button>
-                    <Input
-                      type="number"
-                      min="1"
-                      value={item.quantity}
-                      onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value))}
-                      className="w-16 mx-2 text-center"
-                    />
-                    <Button variant="outline" size="sm" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-                      +
-                    </Button>
-                  </div>
+                  <h3 className="font-semibold">{item.name}</h3>
+                  <p className="text-muted-foreground">
+                    ${(item.price / 100).toFixed(2)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Quantity: {item.quantity}
+                  </p>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => removeItem(item.id)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleRemoveItem(item.id)}
+                >
                   <Trash2 className="h-5 w-5" />
                 </Button>
               </div>
@@ -95,15 +149,15 @@ export default function CartPage() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>${(subtotal / 100).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>${(tax / 100).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>${(total / 100).toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -111,7 +165,7 @@ export default function CartPage() {
               <Link href="/checkout">Proceed to Checkout</Link>
             </Button>
             <Button variant="outline" className="w-full" asChild>
-              <Link href="/products">Continue Shopping</Link>
+              <Link href="/magazines">Continue Shopping</Link>
             </Button>
           </div>
         </div>
