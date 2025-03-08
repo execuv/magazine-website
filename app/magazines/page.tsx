@@ -96,9 +96,11 @@ export default function ProductsPage() {
                 <div className="p-4 flex flex-col flex-grow">
                   <div className="flex items-center justify-between">
                     <Badge variant="outline">{magazine.category}</Badge>
-                    {magazine.badge && (
+                    {magazine.badge ? (
                       <Badge variant="secondary">{magazine.badge}</Badge>
-                    )}
+                    ) : magazine.physicalDelivery ? (
+                      <Badge variant="secondary">Physical Available</Badge>
+                    ) : null}
                   </div>
                   <h3 className="mt-2 text-xl font-bold">{magazine.name}</h3>
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3 min-h-[4.5em]">

@@ -349,7 +349,7 @@ export default function MagazineDetailPage({
                       >
                         <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
                       </svg>
-                      <div className="font-medium">Physical Copy</div>
+                      <div className="font-medium">Digital + Physical</div>
                       <div className="text-sm text-muted-foreground">
                         ${(physicalPrice / 100).toFixed(2)}
                       </div>
@@ -363,8 +363,14 @@ export default function MagazineDetailPage({
 
               {formatSelection === "physical" && (
                 <div className="text-sm text-muted-foreground bg-muted/30 p-2 rounded">
-                  Includes ${(deliveryPrice / 100).toFixed(2)} shipping and
-                  handling
+                  <p>
+                    Includes ${(deliveryPrice / 100).toFixed(2)} shipping and
+                    handling
+                  </p>
+                  <p className="mt-1">
+                    Get instant access to digital edition plus a physical copy
+                    delivered to your door
+                  </p>
                 </div>
               )}
             </div>

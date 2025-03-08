@@ -2,19 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Trash2, Pen, ArrowRight } from "lucide-react"
+import { Trash2, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { useCart } from "@/context/CartContext"
 import { useAuth } from "@/authContext"
-import {
-  Magazine,
-  getMagazineById,
-  updateCartItemFormat,
-} from "@/firebase/firestore"
+import { Magazine, getMagazineById } from "@/firebase/firestore"
 import { toast } from "sonner"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
 
 interface CartItemWithDetails extends Magazine {
   quantity: number
@@ -32,7 +26,6 @@ export default function CartPage() {
   const [items, setItems] = useState<CartItemWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [updatingFormat, setUpdatingFormat] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -77,26 +70,6 @@ export default function CartPage() {
       toast.success("Item removed from cart")
     } catch (error) {
       toast.error("Failed to remove item")
-    }
-  }
-
-  const handleFormatToggle = async (
-    magazineId: string,
-    isCurrentlyPhysical: boolean
-  ) => {
-    if (!user?.uid) return
-
-    try {
-      setUpdatingFormat(magazineId)
-      await updateCartItemFormat(user.uid, magazineId, !isCurrentlyPhysical)
-      await refreshCart()
-      toast.success(
-        `Changed to ${!isCurrentlyPhysical ? "physical" : "digital"} format`
-      )
-    } catch (error) {
-      toast.error("Failed to update format")
-    } finally {
-      setUpdatingFormat(null)
     }
   }
 
@@ -171,9 +144,10 @@ export default function CartPage() {
                   <div className="flex-grow space-y-2">
                     <h3 className="font-semibold">{item.name}</h3>
                     <div className="flex items-center gap-2">
-                      <div>
-                        {item.isPhysical ? "Physical" : "Digital"} Edition
-                      </div>
+                      <Badge variant={item.isPhysical ? "outline" : "default"}>
+                        {item.isPhysical ? "Digital + Physical" : "Digital"}{" "}
+                        Edition
+                      </Badge>
                       <p className="text-muted-foreground">
                         ${(itemTotal / 100).toFixed(2)}
                       </p>
@@ -182,45 +156,17 @@ export default function CartPage() {
                       Quantity: {item.quantity}
                     </p>
 
-                    {/* Format toggle */}
-                    {item.physicalDelivery && (
-                      <div className="flex items-center space-x-2 mt-2">
-                        <div className="flex items-center space-x-2">
-                          <Label
-                            htmlFor={`format-${item.id}`}
-                            className="text-sm"
-                          >
-                            Digital
-                          </Label>
-                          <Switch
-                            id={`format-${item.id}`}
-                            checked={item.isPhysical}
-                            disabled={
-                              updatingFormat === item.id ||
-                              !item.physicalDelivery
-                            }
-                            onCheckedChange={() =>
-                              handleFormatToggle(item.id, item.isPhysical)
-                            }
-                          />
-                          <Label
-                            htmlFor={`format-${item.id}`}
-                            className="text-sm"
-                          >
-                            Physical
-                          </Label>
-                        </div>
-                        {updatingFormat === item.id && (
-                          <span className="w-4 h-4 animate-spin rounded-full border-2 border-primary border-t-transparent ml-2"></span>
-                        )}
-                      </div>
-                    )}
-
+                    {/* Show delivery info for physical items */}
                     {item.isPhysical && (
-                      <p className="text-xs text-muted-foreground">
-                        Includes ${(deliveryPrice / 100).toFixed(2)} shipping
-                        and handling
-                      </p>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        <p>
+                          Includes ${(deliveryPrice / 100).toFixed(2)} shipping
+                          and handling
+                        </p>
+                        <p className="mt-1">
+                          Physical delivery: 3-5 business days
+                        </p>
+                      </div>
                     )}
                   </div>
                   <Button

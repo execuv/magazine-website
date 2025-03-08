@@ -17,7 +17,7 @@ export interface Magazine {
   price: number
   publicationDate: string
   physicalDelivery: boolean
-  deliveryPrice?: number // Added delivery price field
+  deliveryPrice?: number
 }
 
 export async function getMagazines(): Promise<Magazine[]> {
@@ -67,25 +67,6 @@ export async function addToCart(
     }
 
     await updateDoc(cartRef, cart)
-  }
-}
-
-export async function updateCartItemFormat(
-  userId: string,
-  magazineId: string,
-  isPhysical: boolean
-) {
-  const cartRef = doc(db, "carts", userId)
-  const cartDoc = await getDoc(cartRef)
-
-  if (cartDoc.exists()) {
-    const cart = cartDoc.data()
-    const item = cart.items.find((item: any) => item.magazineId === magazineId)
-
-    if (item) {
-      item.isPhysical = isPhysical
-      await updateDoc(cartRef, cart)
-    }
   }
 }
 
