@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const session = await auth.currentUser
 
   // Array of protected routes
-  const protectedRoutes = ['/dashboard', '/profile']
+  const protectedRoutes = ['/dashboard2', '/profile']
 
   // Check if the current route is protected
   const isProtectedRoute = protectedRoutes.some(route => 
@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
   )
 
   if (isAuthRoute && session) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return NextResponse.redirect(new URL('/dashboard2', request.url))
   }
 
   return NextResponse.next()

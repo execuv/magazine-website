@@ -1,189 +1,215 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu"
+import { ShoppingCart, Menu, User } from "lucide-react"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { cn } from "@/lib/utils"
 import { useAuth } from "@/authContext"
-import { toast } from "sonner"
+import { useCart } from "@/context/CartContext"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { logout } from "@/firebase/auth"
-import CartButton from "@/components/cart-button"
+import { Badge } from "@/components/ui/badge"
+import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { userLoggedIn, currentUser } = useAuth()
+  const { cartItems } = useCart()
   const pathname = usePathname()
-  const { userLoggedIn } = useAuth()
+  const [isMounted, setIsMounted] = useState(false)
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
-
-  const isActive = (path: string) => {
-    return pathname === path
-  }
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const handleLogout = async () => {
-    const success = await logout()
-    if (success) {
-      toast.success("Logged out successfully")
-    } else {
-      toast.error("Failed to logout")
-    }
+    await logout()
   }
 
+  const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
+  const userInitial = currentUser?.email?.charAt(0).toUpperCase() || "U"
+
+  const navItems = [
+    { title: "Home", href: "/" },
+    { title: "Magazines", href: "/magazines" },
+    { title: "About", href: "/about" },
+    { title: "Contact", href: "/contact" },
+  ]
+
   return (
-    <header className="px-4 lg:px-6 h-20 flex items-center border-b">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-3xl font-bold">ASTU</span>
-          </Link>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
+      <div className="container flex h-20 items-center justify-between">
+        {/* Logo on the left */}
+        <Link href="/" className="font-bold text-lg">
+          AS<span className="text-primary">TU</span>
+        </Link>
+
+        {/* Desktop Navigation - moved to right */}
+        <div className="hidden md:flex items-center gap-6">
+          {/* Navigation menu now on the right */}
+          <NavigationMenu>
+            <NavigationMenuList>
+              {navItems.map((item) => (
+                <NavigationMenuItem key={item.href}>
+                  <Link href={item.href} legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        pathname === item.href &&
+                          "bg-accent text-accent-foreground"
+                      )}
+                    >
+                      {item.title}
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+
+          {/* User controls remain on the right */}
+          {isMounted && (
+            <div className="flex items-center gap-4">
+              <Link href="/cart">
+                <Button variant="outline" size="icon" className="relative">
+                  <ShoppingCart className="h-[1.2rem] w-[1.2rem]" />
+                  {cartItemCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
+                      {cartItemCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+
+              {userLoggedIn ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="relative">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>{userInitial}</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/cart">Cart</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="text-red-600"
+                    >
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button asChild variant="default" size="sm">
+                  <Link href="/auth/login">
+                    <User className="h-4 w-4 mr-2" />
+                    Login
+                  </Link>
+                </Button>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link
-            href="/"
-            className={`text-sm font-medium ${
-              isActive("/") ? "text-primary" : "hover:text-primary"
-            }`}
-          >
-            Home
-          </Link>
-          <Link
-            href="/magazines"
-            className={`text-sm font-medium ${
-              isActive("/products") ? "text-primary" : "hover:text-primary"
-            }`}
-          >
-            Products
-          </Link>
-          <Link
-            href="/blogs"
-            className={`text-sm font-medium ${
-              isActive("/blogs") || pathname.startsWith("/blogs/")
-                ? "text-primary"
-                : "hover:text-primary"
-            }`}
-          >
-            Blog
-          </Link>
-          <Link
-            href="/about"
-            className={`text-sm font-medium ${
-              isActive("/about") ? "text-primary" : "hover:text-primary"
-            }`}
-          >
-            About
-          </Link>
-          <Link
-            href="/contact"
-            className={`text-sm font-medium ${
-              isActive("/contact") ? "text-primary" : "hover:text-primary"
-            }`}
-          >
-            Contact
-          </Link>
-          <div className="flex items-center gap-4">
-            <CartButton />
-            {userLoggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-              >
-                Logout
-              </button>
-            ) : (
-              <Link
-                href="auth/login"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-              >
-                Login
+        {/* Mobile Navigation */}
+        <div className="md:hidden flex items-center space-x-2">
+          {isMounted && (
+            <>
+              <Link href="/cart">
+                <Button variant="outline" size="icon" className="relative">
+                  <ShoppingCart className="h-[1.2rem] w-[1.2rem]" />
+                  {cartItemCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
+                      {cartItemCount}
+                    </Badge>
+                  )}
+                </Button>
               </Link>
-            )}
-          </div>
-        </nav>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden"
-          onClick={toggleMenu}
-          aria-label="Toggle Menu"
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Menu className="h-[1.2rem] w-[1.2rem]" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <div className="flex flex-col space-y-4 py-4">
+                    {navItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          "px-2 py-1 text-lg",
+                          pathname === item.href && "font-medium text-primary"
+                        )}
+                      >
+                        {item.title}
+                      </Link>
+                    ))}
+                    <div className="border-t pt-4 mt-4">
+                      {userLoggedIn ? (
+                        <>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            Signed in as{" "}
+                            <span className="font-medium">
+                              {currentUser?.email}
+                            </span>
+                          </p>
+                          <Link
+                            href="/dashboard"
+                            className="block px-2 py-1 text-lg"
+                          >
+                            Dashboard
+                          </Link>
+                          <button
+                            onClick={handleLogout}
+                            className="px-2 py-1 text-lg text-red-600 mt-2"
+                          >
+                            Logout
+                          </button>
+                        </>
+                      ) : (
+                        <Button asChild className="w-full">
+                          <Link href="/auth/login">
+                            <User className="h-4 w-4 mr-2" />
+                            Login
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </>
+          )}
+        </div>
       </div>
-
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="container py-4 flex flex-col gap-4">
-            <Link
-              href="/"
-              className={`text-sm font-medium ${
-                isActive("/") ? "text-primary" : "hover:text-primary"
-              }`}
-              onClick={toggleMenu}
-            >
-              Home
-            </Link>
-            <Link
-              href="/products"
-              className={`text-sm font-medium ${
-                isActive("/products") ? "text-primary" : "hover:text-primary"
-              }`}
-              onClick={toggleMenu}
-            >
-              Products
-            </Link>
-            <Link
-              href="/blogs"
-              className={`text-sm font-medium ${
-                isActive("/blogs") || pathname.startsWith("/blogs/")
-                  ? "text-primary"
-                  : "hover:text-primary"
-              }`}
-              onClick={toggleMenu}
-            >
-              Blog
-            </Link>
-            <Link
-              href="/about"
-              className={`text-sm font-medium ${
-                isActive("/about") ? "text-primary" : "hover:text-primary"
-              }`}
-              onClick={toggleMenu}
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className={`text-sm font-medium ${
-                isActive("/contact") ? "text-primary" : "hover:text-primary"
-              }`}
-              onClick={toggleMenu}
-            >
-              Contact
-            </Link>
-            {userLoggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-              >
-                Logout
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-              >
-                Login
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
     </header>
   )
 }

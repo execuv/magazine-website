@@ -184,20 +184,67 @@ export async function getOrderById(
 // Get all orders for a specific user
 export async function getUserOrders(userId: string): Promise<OrderDetails[]> {
   try {
+    // Create a basic query without ordering first
     const ordersCol = collection(db, "orders")
-    const q = query(
-      ordersCol,
-      where("userId", "==", userId),
-      orderBy("orderDate", "desc")
-    )
-    const orderSnapshot = await getDocs(q)
+    const basicQuery = query(ordersCol, where("userId", "==", userId))
 
-    return orderSnapshot.docs.map((doc) => ({
+    // Get the documents
+    const orderSnapshot = await getDocs(basicQuery)
+
+    // Convert to array and sort manually
+    const orders = orderSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as OrderDetails[]
+
+    // Sort by orderDate manually (descending)
+    return orders.sort((a, b) => {
+      // Convert Firebase timestamps to milliseconds if they exist
+      const dateA = a.orderDate
+        ? a.orderDate.toMillis
+          ? a.orderDate.toMillis()
+          : a.orderDate
+        : 0
+      const dateB = b.orderDate
+        ? b.orderDate.toMillis
+          ? b.orderDate.toMillis()
+          : b.orderDate
+        : 0
+
+      // Sort in descending order (most recent first)
+      return dateB - dateA
+    })
   } catch (error) {
     console.error("Error fetching user orders:", error)
+    throw error
+  }
+}
+
+// Get downloadable magazines for a user
+export async function getUserDownloadableMagazines(
+  userId: string
+): Promise<Magazine[]> {
+  try {
+    // First, get all user's orders
+    const orders = await getUserOrders(userId)
+
+    // Extract unique magazine IDs from all orders
+    const magazineIds = new Set<string>()
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        magazineIds.add(item.magazineId)
+      })
+    })
+
+    // Fetch details for each magazine
+    const magazines = await Promise.all(
+      Array.from(magazineIds).map((id) => getMagazineById(id))
+    )
+
+    // Filter out any null values and return the magazines
+    return magazines.filter((mag): mag is Magazine => mag !== null)
+  } catch (error) {
+    console.error("Error fetching user downloadable magazines:", error)
     throw error
   }
 }
