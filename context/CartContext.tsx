@@ -6,13 +6,15 @@ import { addToCart, getCartItems, removeFromCart } from "@/firebase/firestore"
 interface CartItem {
   magazineId: string
   quantity: number
+  isPhysical: boolean
 }
 
 interface CartContextType {
   cartItems: CartItem[]
-  addItem: (magazineId: string) => Promise<void>
+  addItem: (magazineId: string, isPhysical?: boolean) => Promise<void>
   removeItem: (magazineId: string) => Promise<void>
   isLoading: boolean
+  refreshCart: () => Promise<void>
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -35,24 +37,37 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     loadCart()
   }, [currentUser])
 
-  const addItem = async (magazineId: string) => {
+  const addItem = async (magazineId: string, isPhysical = false) => {
     if (!currentUser) {
-      throw new Error('Must be logged in to add items to cart')
+      throw new Error("Must be logged in to add items to cart")
     }
-    await addToCart(currentUser.uid, magazineId)
-    const updatedCart = await getCartItems(currentUser.uid)
-    setCartItems(updatedCart)
+    await addToCart(currentUser.uid, magazineId, isPhysical)
+    refreshCart()
   }
 
   const removeItem = async (magazineId: string) => {
     if (!currentUser) return
     await removeFromCart(currentUser.uid, magazineId)
-    const updatedCart = await getCartItems(currentUser.uid)
-    setCartItems(updatedCart)
+    refreshCart()
+  }
+
+  const refreshCart = async () => {
+    if (!currentUser) return
+    setIsLoading(true)
+    try {
+      const items = await getCartItems(currentUser.uid)
+      setCartItems(items || [])
+    } catch (error) {
+      console.error("Error refreshing cart:", error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <CartContext.Provider value={{ cartItems, addItem, removeItem, isLoading }}>
+    <CartContext.Provider
+      value={{ cartItems, addItem, removeItem, isLoading, refreshCart }}
+    >
       {children}
     </CartContext.Provider>
   )

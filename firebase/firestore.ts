@@ -17,47 +17,75 @@ export interface Magazine {
   price: number
   publicationDate: string
   physicalDelivery: boolean
+  deliveryPrice?: number // Added delivery price field
 }
 
 export async function getMagazines(): Promise<Magazine[]> {
-  const magazinesCol = collection(db, 'magazines');
-  const magazineSnapshot = await getDocs(magazinesCol);
-  return magazineSnapshot.docs.map(doc => ({
+  const magazinesCol = collection(db, "magazines")
+  const magazineSnapshot = await getDocs(magazinesCol)
+  return magazineSnapshot.docs.map((doc) => ({
     id: doc.id,
-    ...doc.data()
-  })) as Magazine[];
+    ...doc.data(),
+  })) as Magazine[]
 }
 
 export async function getMagazineById(id: string): Promise<Magazine | null> {
-  const docRef = doc(db, 'magazines', id);
-  const docSnap = await getDoc(docRef);
-  
+  const docRef = doc(db, "magazines", id)
+  const docSnap = await getDoc(docRef)
+
   if (docSnap.exists()) {
     return {
       id: docSnap.id,
-      ...docSnap.data()
-    } as Magazine;
+      ...docSnap.data(),
+    } as Magazine
   }
-  return null;
+  return null
 }
 
-export async function addToCart(userId: string, magazineId: string) {
-  const cartRef = doc(db, 'carts', userId)
+export async function addToCart(
+  userId: string,
+  magazineId: string,
+  isPhysical: boolean = false
+) {
+  const cartRef = doc(db, "carts", userId)
   const cartDoc = await getDoc(cartRef)
 
   if (!cartDoc.exists()) {
-    await setDoc(cartRef, { items: [{ magazineId, quantity: 1 }] })
+    await setDoc(cartRef, { items: [{ magazineId, quantity: 1, isPhysical }] })
   } else {
     const cart = cartDoc.data()
-    const existingItem = cart.items.find((item: any) => item.magazineId === magazineId)
-    
+    // Look for the exact same item with the same format
+    const existingItem = cart.items.find(
+      (item: any) =>
+        item.magazineId === magazineId && item.isPhysical === isPhysical
+    )
+
     if (existingItem) {
       existingItem.quantity += 1
     } else {
-      cart.items.push({ magazineId, quantity: 1 })
+      cart.items.push({ magazineId, quantity: 1, isPhysical })
     }
-    
+
     await updateDoc(cartRef, cart)
+  }
+}
+
+export async function updateCartItemFormat(
+  userId: string,
+  magazineId: string,
+  isPhysical: boolean
+) {
+  const cartRef = doc(db, "carts", userId)
+  const cartDoc = await getDoc(cartRef)
+
+  if (cartDoc.exists()) {
+    const cart = cartDoc.data()
+    const item = cart.items.find((item: any) => item.magazineId === magazineId)
+
+    if (item) {
+      item.isPhysical = isPhysical
+      await updateDoc(cartRef, cart)
+    }
   }
 }
 

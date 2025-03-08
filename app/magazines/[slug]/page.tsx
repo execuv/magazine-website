@@ -13,6 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { type Magazine, getMagazineById } from "@/firebase/firestore"
 import { useCart } from "@/context/CartContext"
 import { useAuth } from "@/authContext"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
 
 // Add after the imports
 const hideScrollbarStyles = `
@@ -34,7 +36,10 @@ export default function MagazineDetailPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const [addingToCart, setAddingToCart] = useState(false) // Add this line
+  const [addingToCart, setAddingToCart] = useState(false)
+  const [formatSelection, setFormatSelection] = useState<
+    "digital" | "physical"
+  >("digital")
   const { addItem } = useCart()
   const { userLoggedIn } = useAuth()
 
@@ -64,14 +69,16 @@ export default function MagazineDetailPage({
       toast.error("Please login to add items to cart")
       return
     }
+
     try {
-      setAddingToCart(true) // Set loading state to true before adding
-      await addItem(params.slug)
-      toast.success("Added to cart")
+      setAddingToCart(true)
+      const isPhysical = formatSelection === "physical"
+      await addItem(params.slug, isPhysical)
+      toast.success(`Added to cart (${formatSelection} edition)`)
     } catch (error) {
       toast.error("Failed to add to cart")
     } finally {
-      setAddingToCart(false) // Reset loading state when done
+      setAddingToCart(false)
     }
   }
 
@@ -135,6 +142,12 @@ export default function MagazineDetailPage({
   }
 
   if (!magazine) return null
+
+  // Calculate delivery cost - assuming a default 10% of magazine price if not specified
+  const deliveryPrice =
+    magazine.deliveryPrice || Math.round(magazine.price * 0.1)
+  const physicalPrice =
+    magazine.price + (formatSelection === "physical" ? deliveryPrice : 0)
 
   return (
     <>
@@ -252,6 +265,108 @@ export default function MagazineDetailPage({
 
             <div className="prose prose-sm max-w-none text-muted-foreground">
               <p>{magazine.description}</p>
+            </div>
+
+            {/* Add format selection */}
+            <div className="space-y-4">
+              <h3 className="font-semibold">Select Format</h3>
+
+              <RadioGroup
+                value={formatSelection}
+                onValueChange={(val) =>
+                  setFormatSelection(val as "digital" | "physical")
+                }
+                className="flex gap-4 flex-wrap"
+              >
+                <div
+                  className={`border rounded-lg p-4 flex-1 min-w-[150px] cursor-pointer ${
+                    formatSelection === "digital"
+                      ? "border-primary bg-muted/20"
+                      : ""
+                  }`}
+                >
+                  <RadioGroupItem
+                    value="digital"
+                    id="digital"
+                    className="sr-only"
+                  />
+                  <Label
+                    htmlFor="digital"
+                    className="flex flex-col items-center gap-2 cursor-pointer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-6 w-6"
+                    >
+                      <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                    </svg>
+                    <div className="font-medium">Digital Edition</div>
+                    <div className="text-sm text-muted-foreground">
+                      ${(magazine.price / 100).toFixed(2)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Instant delivery
+                    </div>
+                  </Label>
+                </div>
+
+                {magazine.physicalDelivery && (
+                  <div
+                    className={`border rounded-lg p-4 flex-1 min-w-[150px] cursor-pointer ${
+                      formatSelection === "physical"
+                        ? "border-primary bg-muted/20"
+                        : ""
+                    }`}
+                  >
+                    <RadioGroupItem
+                      value="physical"
+                      id="physical"
+                      className="sr-only"
+                    />
+                    <Label
+                      htmlFor="physical"
+                      className="flex flex-col items-center gap-2 cursor-pointer"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-6 w-6"
+                      >
+                        <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+                      </svg>
+                      <div className="font-medium">Physical Copy</div>
+                      <div className="text-sm text-muted-foreground">
+                        ${(physicalPrice / 100).toFixed(2)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        3-5 day delivery
+                      </div>
+                    </Label>
+                  </div>
+                )}
+              </RadioGroup>
+
+              {formatSelection === "physical" && (
+                <div className="text-sm text-muted-foreground bg-muted/30 p-2 rounded">
+                  Includes ${(deliveryPrice / 100).toFixed(2)} shipping and
+                  handling
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
