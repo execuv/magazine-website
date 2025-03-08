@@ -9,6 +9,7 @@ import { useAuth } from "@/authContext"
 import { Magazine, getMagazineById } from "@/firebase/firestore"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface CartItemWithDetails extends Magazine {
   quantity: number
@@ -83,6 +84,13 @@ export default function CartPage() {
     return item.price + (item.isPhysical ? deliveryPrice : 0)
   }
 
+  const subtotal = items.reduce(
+    (sum, item) => sum + calculateItemTotal(item) * item.quantity,
+    0
+  )
+  // Remove tax calculation
+  const total = subtotal // Just use subtotal as the total
+
   if (!userLoggedIn) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
@@ -97,8 +105,40 @@ export default function CartPage() {
 
   if (loading || isCartLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        Loading cart...
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="flex items-center border rounded-lg p-4 gap-4"
+            >
+              <Skeleton className="h-24 w-20 rounded-md" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-6 w-2/3" />
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-4 w-1/3" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-10 w-20" />
+                <Skeleton className="h-10 w-20" />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 border-t pt-4">
+          <div className="flex justify-between mb-2">
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-24" />
+          </div>
+          <div className="flex justify-between font-bold">
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-6 w-24" />
+          </div>
+          <div className="mt-6">
+            <Skeleton className="h-12 w-full rounded-md" />
+          </div>
+        </div>
       </div>
     )
   }
@@ -110,13 +150,6 @@ export default function CartPage() {
       </div>
     )
   }
-
-  const subtotal = items.reduce(
-    (sum, item) => sum + calculateItemTotal(item) * item.quantity,
-    0
-  )
-  const tax = subtotal * 0.1
-  const total = subtotal + tax
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -200,10 +233,7 @@ export default function CartPage() {
                   <span>Subtotal</span>
                   <span>${(subtotal / 100).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Tax</span>
-                  <span>${(tax / 100).toFixed(2)}</span>
-                </div>
+                {/* Tax row removed */}
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
                   <span>${(total / 100).toFixed(2)}</span>
