@@ -3,7 +3,6 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/navbar"
-import Footer from "@/components/footer"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import { Toaster } from "sonner"
@@ -32,7 +31,6 @@ export default function RootLayout({
             <div className="min-h-screen flex flex-col">
               <Navbar />
               <main className="flex-1">{children}</main>
-              <Footer />
             </div>
             <Toaster position="top-center" />
           </CartProvider>

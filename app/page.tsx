@@ -6,6 +6,7 @@ const ClientReviewsPreview = dynamic(() => import("@/components/client-reviews-p
 import WhoWeArePreview from "@/components/who-we-are-preview"
 import ContactPreview from "@/components/contact-preview"
 import BlogPreview from "@/components/blog-preview"
+import Footer from "@/components/footer"
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <ClientReviewsPreview />
       <BlogPreview />
       <ContactPreview />
+      <Footer />
     </>
   )
 }
