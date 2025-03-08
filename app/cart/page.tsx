@@ -26,6 +26,7 @@ export default function CartPage() {
   const [items, setItems] = useState<CartItemWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [removingItemId, setRemovingItemId] = useState<string | null>(null) // Track which item is being removed
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -66,10 +67,13 @@ export default function CartPage() {
 
   const handleRemoveItem = async (magazineId: string) => {
     try {
+      setRemovingItemId(magazineId) // Set removing state
       await removeItem(magazineId)
       toast.success("Item removed from cart")
     } catch (error) {
       toast.error("Failed to remove item")
+    } finally {
+      setRemovingItemId(null) // Reset removing state
     }
   }
 
@@ -131,6 +135,8 @@ export default function CartPage() {
               const itemTotal = calculateItemTotal(item)
               const deliveryPrice =
                 item.deliveryPrice || Math.round(item.price * 0.1)
+              const isRemoving = removingItemId === item.id
+
               return (
                 <div
                   key={item.id}
@@ -173,8 +179,14 @@ export default function CartPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleRemoveItem(item.id)}
+                    disabled={isRemoving}
+                    className="min-w-[40px] min-h-[40px]"
                   >
-                    <Trash2 className="h-5 w-5" />
+                    {isRemoving ? (
+                      <span className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                    ) : (
+                      <Trash2 className="h-5 w-5" />
+                    )}
                   </Button>
                 </div>
               )
