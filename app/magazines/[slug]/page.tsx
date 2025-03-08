@@ -34,6 +34,7 @@ export default function MagazineDetailPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [addingToCart, setAddingToCart] = useState(false) // Add this line
   const { addItem } = useCart()
   const { userLoggedIn } = useAuth()
 
@@ -64,10 +65,13 @@ export default function MagazineDetailPage({
       return
     }
     try {
+      setAddingToCart(true) // Set loading state to true before adding
       await addItem(params.slug)
       toast.success("Added to cart")
     } catch (error) {
       toast.error("Failed to add to cart")
+    } finally {
+      setAddingToCart(false) // Reset loading state when done
     }
   }
 
@@ -284,9 +288,19 @@ export default function MagazineDetailPage({
                 size="lg"
                 className="flex-1 gap-2"
                 onClick={handleAddToCart}
+                disabled={addingToCart}
               >
-                <ShoppingCart className="w-5 h-5" />
-                Add to Cart
+                {addingToCart ? (
+                  <>
+                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart className="w-5 h-5" />
+                    Add to Cart
+                  </>
+                )}
               </Button>
               <Button
                 size="lg"
