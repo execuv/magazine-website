@@ -7,7 +7,7 @@ import { Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useCart } from "@/context/CartContext"
 import { useAuth } from "@/authContext"
-import { Magazine, getMagazineById } from "@/app/utils/firestore"
+import { Magazine, getMagazineById } from "@/firebase/firestore"
 import { toast } from "sonner"
 
 interface CartItemWithDetails extends Magazine {
@@ -72,7 +72,7 @@ export default function CartPage() {
         <h1 className="text-3xl font-bold mb-4">Please Login</h1>
         <p className="mb-4">You need to be logged in to view your cart</p>
         <Button asChild>
-          <Link href="/login">Login</Link>
+          <Link href="/auth/login">Login</Link>
         </Button>
       </div>
     )
@@ -108,7 +108,7 @@ export default function CartPage() {
         <div className="text-center py-8">
           <p className="text-xl mb-4">Your cart is empty</p>
           <Button asChild>
-            <Link href="/products">Continue Shopping</Link>
+            <Link href="/magazines ">Continue Shopping</Link>
           </Button>
         </div>
       ) : (

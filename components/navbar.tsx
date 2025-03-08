@@ -52,7 +52,7 @@ export default function Navbar() {
             Home
           </Link>
           <Link
-            href="/products"
+            href="/magazines"
             className={`text-sm font-medium ${
               isActive("/products") ? "text-primary" : "hover:text-primary"
             }`}

@@ -3,53 +3,60 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { Magazine, getMagazines } from "@/app/utils/firestore"
+import { Magazine, getMagazines } from "@/firebase/firestore"
 
 export default function ProductsPage() {
-  const [magazines, setMagazines] = useState<Magazine[]>([]);
-  const [filteredMagazines, setFilteredMagazines] = useState<Magazine[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>("All Categories");
+  const [magazines, setMagazines] = useState<Magazine[]>([])
+  const [filteredMagazines, setFilteredMagazines] = useState<Magazine[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [activeCategory, setActiveCategory] = useState<string>("All Categories")
 
   useEffect(() => {
     const fetchMagazines = async () => {
       try {
-        const data = await getMagazines();
-        setMagazines(data);
-        setFilteredMagazines(data);
+        const data = await getMagazines()
+        setMagazines(data)
+        setFilteredMagazines(data)
       } catch (err) {
-        setError('Failed to fetch magazines');
-        console.error(err);
+        setError("Failed to fetch magazines")
+        console.error(err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchMagazines();
-  }, []);
+    fetchMagazines()
+  }, [])
 
   // Get unique categories from magazines
-  const categories = ["All Categories", ...new Set(magazines.map(mag => mag.category))];
+  const categories = [
+    "All Categories",
+    ...new Set(magazines.map((mag) => mag.category)),
+  ]
 
   const handleCategoryClick = (category: string) => {
-    setActiveCategory(category);
+    setActiveCategory(category)
     if (category === "All Categories") {
-      setFilteredMagazines(magazines);
+      setFilteredMagazines(magazines)
     } else {
-      setFilteredMagazines(magazines.filter(mag => mag.category === category));
+      setFilteredMagazines(magazines.filter((mag) => mag.category === category))
     }
-  };
+  }
 
-  if (loading) return <div className="py-16 text-center">Loading magazines...</div>;
-  if (error) return <div className="py-16 text-center text-red-500">{error}</div>;
+  if (loading)
+    return <div className="py-16 text-center">Loading magazines...</div>
+  if (error)
+    return <div className="py-16 text-center text-red-500">{error}</div>
 
   return (
     <div className="py-16">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Products</h1>
+            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+              Our Products
+            </h1>
             <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
               Browse our collection of premium digital magazines
             </p>
@@ -71,8 +78,12 @@ export default function ProductsPage() {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {filteredMagazines.map((magazine) => (
-            <Link href={`/magazines/${magazine.id}`} key={magazine.id}>
-              <div className="group relative overflow-hidden rounded-lg border cursor-pointer transition-shadow hover:shadow-lg">
+            <Link
+              href={`/magazines/${magazine.id}`}
+              key={magazine.id}
+              className="h-full"
+            >
+              <div className="group relative overflow-hidden rounded-lg border cursor-pointer transition-shadow hover:shadow-lg h-full flex flex-col">
                 <div className="aspect-[3/4] overflow-hidden">
                   <img
                     src={magazine.image || "/placeholder.svg"}
@@ -82,16 +93,22 @@ export default function ProductsPage() {
                     height={400}
                   />
                 </div>
-                <div className="p-4">
+                <div className="p-4 flex flex-col flex-grow">
                   <div className="flex items-center justify-between">
                     <Badge variant="outline">{magazine.category}</Badge>
-                    {magazine.badge && <Badge variant="secondary">{magazine.badge}</Badge>}
+                    {magazine.badge && (
+                      <Badge variant="secondary">{magazine.badge}</Badge>
+                    )}
                   </div>
                   <h3 className="mt-2 text-xl font-bold">{magazine.name}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{magazine.description}</p>
+                  <p className="mt-2 text-sm text-muted-foreground line-clamp-3 min-h-[4.5em]">
+                    {magazine.description}
+                  </p>
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="text-lg font-bold">${(magazine.price / 100).toFixed(2)}</span>
-                    <Button size="sm">Add to Cart</Button>
+                    <span className="text-lg font-bold">
+                      ${(magazine.price / 100).toFixed(2)}
+                    </span>
+                    <Button size="sm">Explore</Button>
                   </div>
                 </div>
               </div>

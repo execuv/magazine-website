@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { Magazine, getMagazines } from "@/app/utils/firestore"
+import { Magazine, getMagazines } from "@/firebase/firestore"
 
 export default function ProductsPreview() {
   const [magazines, setMagazines] = useState<Magazine[]>([])
@@ -46,8 +46,12 @@ export default function ProductsPreview() {
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-12">
           {magazines.map((magazine) => (
-            <Link href={`/magazines/${magazine.id}`} key={magazine.id}>
-              <div className="group relative overflow-hidden rounded-lg border">
+            <Link
+              href={`/magazines/${magazine.id}`}
+              key={magazine.id}
+              className="h-full"
+            >
+              <div className="group relative overflow-hidden rounded-lg border h-full flex flex-col">
                 <div className="aspect-[3/4] overflow-hidden">
                   <img
                     src={magazine.image || "/placeholder.svg"}
@@ -57,7 +61,7 @@ export default function ProductsPreview() {
                     height={400}
                   />
                 </div>
-                <div className="p-4">
+                <div className="p-4 flex flex-col flex-grow">
                   <div className="flex items-center justify-between">
                     <Badge variant="outline">{magazine.category}</Badge>
                     {magazine.badge && (
@@ -84,8 +88,12 @@ export default function ProductsPreview() {
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-12">
           {magazines.map((magazine) => (
-            <Link href={`/magazines/${magazine.id}`} key={magazine.id}>
-              <div className="group relative overflow-hidden rounded-lg border">
+            <Link
+              href={`/magazines/${magazine.id}`}
+              key={magazine.id}
+              className="h-full"
+            >
+              <div className="group relative overflow-hidden rounded-lg border h-full flex flex-col">
                 <div className="aspect-[3/4] overflow-hidden">
                   <img
                     src={magazine.image || "/placeholder.svg"}
@@ -95,7 +103,7 @@ export default function ProductsPreview() {
                     height={400}
                   />
                 </div>
-                <div className="p-4">
+                <div className="p-4 flex flex-col flex-grow">
                   <div className="flex items-center justify-between">
                     <Badge variant="outline">{magazine.category}</Badge>
                     {magazine.badge && (
@@ -103,7 +111,7 @@ export default function ProductsPreview() {
                     )}
                   </div>
                   <h3 className="mt-2 text-xl font-bold">{magazine.name}</h3>
-                  <div className="mt-2 flex items-center justify-between">
+                  <div className="mt-auto flex items-center justify-between">
                     <span className="text-lg font-bold">
                       ${(magazine.price / 100).toFixed(2)}
                     </span>

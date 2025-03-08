@@ -4,18 +4,19 @@ import { app } from '@/firebase/firebase';
 const db = getFirestore(app);
 
 export interface Magazine {
-  id: string;
-  badge?: string;
-  brand: string;
-  category: string;
-  description: string;
-  image: string;
-  language: string;
-  name: string;
-  pageCount: number;
-  previewImage: string[];
-  price: number;
-  publicationDate: string;
+  id: string
+  badge?: string
+  brand: string
+  category: string
+  description: string
+  image: string
+  language: string
+  name: string
+  pageCount: number
+  previewImage: string[]
+  price: number
+  publicationDate: string
+  physicalDelivery: boolean
 }
 
 export async function getMagazines(): Promise<Magazine[]> {

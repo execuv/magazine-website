@@ -1,7 +1,7 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react'
 import { useAuth } from '@/authContext'
-import { addToCart, getCartItems, removeFromCart } from '@/app/utils/firestore'
+import { addToCart, getCartItems, removeFromCart } from "@/firebase/firestore"
 
 interface CartItem {
   magazineId: string
