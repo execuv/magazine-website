@@ -176,7 +176,7 @@ export default function MagazineDetailPage({
 
         <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
           <div className="space-y-4">
-            <div className="relative overflow-hidden rounded-lg bg-muted/20 border shadow-sm flex items-center justify-center h-[400px]">
+            <div className="relative overflow-hidden rounded-lg bg-muted/20 border shadow-sm flex items-center justify-center h-[550px]">
               <img
                 src={selectedImage || magazine.image || "/placeholder.svg"}
                 alt={magazine.name}

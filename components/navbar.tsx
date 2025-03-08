@@ -33,7 +33,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="px-4 lg:px-6 h-14 flex items-center border-b">
+    <header className="px-4 lg:px-6 h-20 flex items-center border-b">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center space-x-2">
