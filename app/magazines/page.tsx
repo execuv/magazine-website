@@ -100,11 +100,11 @@ export default function ProductsPage() {
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                Our Products
+                Explore latest editorials
               </h1>
-              <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Browse our collection of premium digital magazines
-              </p>
+                <p className="max-w-[800px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Browse our exclusive collection of premium magazines curated just for you
+                </p>
             </div>
           </div>
 

@@ -154,7 +154,18 @@ export default function Footer() {
         <div className="mt-12 border-t pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-center text-sm text-muted-foreground md:text-left">
-              © {new Date().getFullYear()} EXCLUVISION. All rights reserved.
+              © {new Date().getFullYear()} EXCLUVISION. All rights reserved.{" "}
+              <span className="ml-1 border-l pl-2 text-muted-foreground">
+                Developed and maintained by{" "}
+                <Link
+                  href="https://www.astucreatives.com/"
+                  className="font-semibold text-primary/90 hover:text-primary underline decoration-primary/30 hover:decoration-primary transition-all"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  astucreatives.com
+                </Link>
+              </span>
             </p>
             <div className="flex gap-4 text-sm text-muted-foreground">
               <Link href="/privacy-policy" className="hover:text-primary">
