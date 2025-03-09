@@ -11,6 +11,7 @@ import {
   query,
   where,
   orderBy,
+  deleteDoc,
 } from "firebase/firestore"
 import { app } from "@/firebase/firebase"
 
@@ -31,6 +32,7 @@ export interface Magazine {
   publicationDate: string
   physicalDelivery: boolean
   deliveryPrice?: number
+  pdfUrl: string // Add this new field
 }
 
 export interface OrderItem {
@@ -245,6 +247,46 @@ export async function getUserDownloadableMagazines(
     return magazines.filter((mag): mag is Magazine => mag !== null)
   } catch (error) {
     console.error("Error fetching user downloadable magazines:", error)
+    throw error
+  }
+}
+
+export async function addMagazine(magazineData: Omit<Magazine, "id">) {
+  try {
+    const magazinesRef = collection(db, "magazines")
+    const docRef = await addDoc(magazinesRef, {
+      ...magazineData,
+      createdAt: serverTimestamp(),
+    })
+    return docRef.id
+  } catch (error) {
+    console.error("Error adding magazine:", error)
+    throw error
+  }
+}
+
+export async function deleteMagazine(magazineId: string) {
+  try {
+    const magazineRef = doc(db, "magazines", magazineId)
+    await deleteDoc(magazineRef)
+  } catch (error) {
+    console.error("Error deleting magazine:", error)
+    throw error
+  }
+}
+
+export async function updateMagazine(
+  magazineId: string,
+  magazineData: Partial<Magazine>
+) {
+  try {
+    const magazineRef = doc(db, "magazines", magazineId)
+    await updateDoc(magazineRef, {
+      ...magazineData,
+      updatedAt: serverTimestamp(),
+    })
+  } catch (error) {
+    console.error("Error updating magazine:", error)
     throw error
   }
 }

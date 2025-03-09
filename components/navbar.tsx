@@ -57,8 +57,8 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="container flex h-20 items-center justify-between">
         {/* Logo on the left */}
-        <Link href="/" className="font-bold text-lg">
-          AS<span className="text-primary">TU</span>
+        <Link href="/" className="font-bold text-2xl">
+          EXCLU<span className="text-primary">VISION</span>
         </Link>
 
         {/* Desktop Navigation - moved to right */}

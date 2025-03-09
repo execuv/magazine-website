@@ -78,12 +78,22 @@ export default function DashboardPage() {
   }
 
   const handleDownload = (magazine: Magazine) => {
-    // In a real application, this would fetch the actual file from storage
-    // For demo purposes, we'll just show a toast
-    toast.success(`Download started for ${magazine.name}`)
+    if (!magazine.pdfUrl) {
+      toast.error("Download URL not available")
+      return
+    }
 
-    // In a real application, you would redirect to the download URL or trigger a file download
-    // window.open(magazine.downloadUrl, '_blank')
+    // Create an anchor element and trigger download
+    const link = document.createElement("a")
+    link.href = magazine.pdfUrl
+    link.target = "_blank" // Open in new tab
+    link.rel = "noopener noreferrer" // Security best practice
+    link.download = `${magazine.name}.pdf` // Suggested filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    toast.success(`Download started for ${magazine.name}`)
   }
 
   if (authLoading || loading) {
