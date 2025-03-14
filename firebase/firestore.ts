@@ -222,6 +222,43 @@ export async function getUserOrders(userId: string): Promise<OrderDetails[]> {
   }
 }
 
+// Get all orders for admin
+export async function getAllOrders(): Promise<OrderDetails[]> {
+  try {
+    const ordersCol = collection(db, "orders")
+    const ordersQuery = query(
+      ordersCol,
+      orderBy("orderDate", "desc") // Add proper ordering
+    )
+    const orderSnapshot = await getDocs(ordersQuery)
+    
+    return orderSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as OrderDetails[]
+  } catch (error) {
+    console.error("Error fetching all orders:", error)
+    throw error
+  }
+}
+
+// Update order status
+export async function updateOrderStatus(
+  orderId: string,
+  newStatus: OrderDetails["status"]
+) {
+  try {
+    const orderRef = doc(db, "orders", orderId)
+    await updateDoc(orderRef, {
+      status: newStatus,
+      updatedAt: serverTimestamp(),
+    })
+  } catch (error) {
+    console.error("Error updating order status:", error)
+    throw error
+  }
+}
+
 // Get downloadable magazines for a user
 export async function getUserDownloadableMagazines(
   userId: string
