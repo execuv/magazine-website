@@ -144,7 +144,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         </div>
 
         {/* Article content */}
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-3xl markdown">
           <div
             className="prose prose-lg max-w-none dark:prose-invert"
             dangerouslySetInnerHTML={{ __html: post.content || '' }}
