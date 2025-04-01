@@ -2,124 +2,42 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Footer from "@/components/footer"
+import { data } from "../../public/Blogdatas/Articles"
+import Image from "next/image"
 
 interface BlogPost {
   id: number
-  title: string
-  excerpt: string
+  title?: string
+  excerpt?: string
+  content?: string
   date: string
   author: string
+  authorBio?: string
   category: string
-  image: string
+  images?: string[]
+  image?: string
   slug: string
+  readTime?: string
+  tags?: string[]
   featured?: boolean
 }
 
 export default function BlogsPage() {
-  const blogPosts: BlogPost[] = [
-    {
-      id: 1,
-      title: "The Future of Digital Publishing in 2025",
-      excerpt:
-        "Explore the emerging trends that will shape the digital publishing landscape in the coming years, from interactive content to AI-driven personalization.",
-      date: "March 15, 2025",
-      author: "Sarah Johnson",
-      category: "Industry Insights",
-      image: "/placeholder.svg?height=400&width=600",
-      slug: "future-of-digital-publishing-2025",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "How to Create a Stunning Magazine Layout",
-      excerpt:
-        "Learn the principles of effective magazine design that captivates readers and enhances content. Discover typography tips, grid systems, and visual hierarchy.",
-      date: "March 10, 2025",
-      author: "David Chen",
-      category: "Design Tips",
-      image: "/placeholder.svg?height=400&width=600",
-      slug: "create-stunning-magazine-layout",
-      featured: true,
-    },
-    {
-      id: 3,
-      title: "The Rise of Niche Digital Magazines",
-      excerpt:
-        "Discover why specialized content is gaining popularity and how it's changing reader expectations. Explore successful niche publications and their strategies.",
-      date: "March 5, 2025",
-      author: "Emily Rodriguez",
-      category: "Market Trends",
-      image: "/placeholder.svg?height=400&width=600",
-      slug: "rise-of-niche-digital-magazines",
-      featured: true,
-    },
-    {
-      id: 4,
-      title: "7 Essential Tools for Digital Magazine Creators",
-      excerpt:
-        "A comprehensive guide to the software and platforms that can help you create, publish, and distribute professional-quality digital magazines.",
-      date: "February 28, 2025",
-      author: "Michael Thompson",
-      category: "Resources",
-      image: "/placeholder.svg?height=400&width=600",
-      slug: "essential-tools-digital-magazine-creators",
-    },
-    {
-      id: 5,
-      title: "Monetization Strategies for Digital Publications",
-      excerpt:
-        "Explore different revenue models for digital magazines, from subscriptions and paywalls to advertising and affiliate marketing.",
-      date: "February 20, 2025",
-      author: "Jennifer Lee",
-      category: "Business",
-      image: "/placeholder.svg?height=400&width=600",
-      slug: "monetization-strategies-digital-publications",
-    },
-    {
-      id: 6,
-      title: "The Psychology of Reading: Print vs. Digital",
-      excerpt:
-        "An in-depth look at how readers interact with different formats and what it means for digital magazine publishers.",
-      date: "February 15, 2025",
-      author: "Dr. Robert Anderson",
-      category: "Research",
-      image: "/placeholder.svg?height=400&width=600",
-      slug: "psychology-reading-print-vs-digital",
-    },
-    {
-      id: 7,
-      title: "Accessibility in Digital Publishing: A Complete Guide",
-      excerpt:
-        "Learn how to make your digital magazines accessible to all readers, including those with disabilities. Best practices and tools explained.",
-      date: "February 10, 2025",
-      author: "Lisa Martinez",
-      category: "Best Practices",
-      image: "/placeholder.svg?height=400&width=600",
-      slug: "accessibility-digital-publishing-guide",
-    },
-    {
-      id: 8,
-      title: "How to Build a Loyal Readership for Your Digital Magazine",
-      excerpt:
-        "Strategies for growing and maintaining an engaged audience for your publication, from content planning to community building.",
-      date: "February 5, 2025",
-      author: "James Wilson",
-      category: "Marketing",
-      image: "/placeholder.svg?height=400&width=600",
-      slug: "build-loyal-readership-digital-magazine",
-    },
-    {
-      id: 9,
-      title: "The Impact of AI on Editorial Workflows",
-      excerpt:
-        "How artificial intelligence is transforming content creation, editing, and curation in the digital publishing industry.",
-      date: "January 30, 2025",
-      author: "Sarah Johnson",
-      category: "Technology",
-      image: "/placeholder.svg?height=400&width=600",
-      slug: "impact-ai-editorial-workflows",
-    },
-  ]
+  // Convert data from Articles.ts to BlogPost format with required fields
+  const blogPosts: BlogPost[] = data.map(post => ({
+    id: post.id,
+    title: post.slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+    excerpt: `This is an excerpt for ${post.slug}. The complete article contains more detailed information.`,
+    date: post.date,
+    author: post.author,
+    authorBio: post.authorBio,
+    category: post.category,
+    image: post.images && post.images[0] ? post.images[0] : "/placeholder.svg?height=400&width=600",
+    slug: post.slug,
+    readTime: post.readTime,
+    tags: post.tags,
+    featured: post.id <= 3 // Mark first 3 posts as featured
+  }));
 
   // Get the featured post (first in the array)
   const featuredPost = blogPosts.find((post) => post.featured) || blogPosts[0]
@@ -204,24 +122,17 @@ export default function BlogsPage() {
               </div>
             </div>
           </div>
-
+          
           {/* Filter Categories */}
           <div className="flex flex-wrap gap-4 mb-8 justify-center">
             <Button variant="outline" className="rounded-full">
               All Categories
             </Button>
-            <Button variant="outline" className="rounded-full">
-              Industry Insights
-            </Button>
-            <Button variant="outline" className="rounded-full">
-              Design Tips
-            </Button>
-            <Button variant="outline" className="rounded-full">
-              Market Trends
-            </Button>
-            <Button variant="outline" className="rounded-full">
-              Technology
-            </Button>
+            {Array.from(new Set(blogPosts.map(post => post.category))).map(category => (
+              <Button key={category} variant="outline" className="rounded-full">
+                {category}
+              </Button>
+            ))}
           </div>
 
           {/* Regular Posts */}
