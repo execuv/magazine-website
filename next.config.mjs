@@ -17,9 +17,21 @@ const nextConfig = {
     unoptimized: true,
   },
   experimental: {
-    webpackBuildWorker: true,
+    // Removed unsupported 'runtime' key
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Fix Edge Runtime compatibility by replacing problematic modules
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        process: false,
+        MessageChannel: false,
+        BroadcastChannel: false,
+      };
+    }
+    return config;
   },
 }
 
