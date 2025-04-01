@@ -58,7 +58,7 @@ export default function Navbar() {
       <div className="container flex h-20 items-center justify-between">
         {/* Logo on the left */}
         <Link href="/" className="font-bold text-2xl">
-          EXCLU<span className="text-primary">VISION</span>
+        EXECU<span className="text-primary">VISION</span>
         </Link>
 
         {/* Desktop Navigation - moved to right */}
