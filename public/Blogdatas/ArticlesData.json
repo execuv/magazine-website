@@ -1,0 +1,81 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "content":"/Blogdatas/Blog1.md",
+            "images":[""],
+            "date": "March 15, 2025",
+            "author": "Sarah Johnson",
+            "authorBio": "Sarah is our Content Director with over 15 years of experience in digital publishing. She specializes in emerging media trends and technology.",
+            "category": "Cryptocurrency",
+            "slug": "us-bitcoin-reserve-trumps-vision",
+            "readTime": "8 min read",
+            "tags": [
+                "Bitcoin",
+                "Cryptocurrency",
+                "Donald Trump",
+                "Blockchain",
+                "Digital Currency",
+                "Government Policy"
+            ]
+        },
+        {
+            "id": 2,
+            "content":"/Blogdatas/Blog2.md",
+            "images":[""],
+            "date": "March 15, 2025",
+            "author": "Sarah Johnson",
+            "authorBio": "Sarah is our Content Director with over 15 years of experience in digital publishing. She specializes in emerging media trends and technology.",
+            "category": "Cryptocurrency",
+            "slug": "us-bitcoin-reserve-trumps-vision",
+            "readTime": "8 min read",
+            "tags": [
+                "Bitcoin",
+                "Cryptocurrency",
+                "Donald Trump",
+                "Blockchain",
+                "Digital Currency",
+                "Government Policy"
+            ]
+        },
+        {
+            "id": 2,
+            "content":"/Blogdatas/Blog2.md",
+            "images":[""],
+            "date": "March 15, 2025",
+            "author": "Sarah Johnson",
+            "authorBio": "Sarah is our Content Director with over 15 years of experience in digital publishing. She specializes in emerging media trends and technology.",
+            "category": "Cryptocurrency",
+            "slug": "us-bitcoin-reserve-trumps-vision",
+            "readTime": "8 min read",
+            "tags": [
+                "Bitcoin",
+                "Cryptocurrency",
+                "Donald Trump",
+                "Blockchain",
+                "Digital Currency",
+                "Government Policy"
+            ]
+        },
+        {
+            "id": 3,
+            "content":"/Blogdatas/Blog3.md",
+            "images":[""],
+            "date": "March 15, 2025",
+            "author": "Sarah Johnson",
+            "authorBio": "Sarah is our Content Director with over 15 years of experience in digital publishing. She specializes in emerging media trends and technology.",
+            "category": "Cryptocurrency",
+            "slug": "us-bitcoin-reserve-trumps-vision",
+            "readTime": "8 min read",
+            "tags": [
+                "Bitcoin",
+                "Cryptocurrency",
+                "Donald Trump",
+                "Blockchain",
+                "Digital Currency",
+                "Government Policy"
+            ]
+        }
+    ]
+}
+
