@@ -327,3 +327,8 @@ export async function updateMagazine(
     throw error
   }
 }
+
+export async function getAllMagazineIds(): Promise<string[]> {
+  const magazinesCollection = await getDocs(collection(db, "magazines"))
+  return magazinesCollection.docs.map((doc) => doc.id)
+}
