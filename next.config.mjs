@@ -47,6 +47,6 @@ function mergeConfig(nextConfig, userConfig) {
 
 export default nextConfig
 
-module.exports = {
+export const testConfig = {
   testTimeout: 30000, // 30 seconds
 };

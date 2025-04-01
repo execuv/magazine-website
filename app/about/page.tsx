@@ -65,7 +65,7 @@ export default function AboutPage() {
           >
             <div className="space-y-2 max-w-3xl">
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-                About The Execuvision
+                About The Execuvison
               </h1>
               <p className="max-w-[800px] text-muted-foreground text-lg sm:text-xl/relaxed lg:text-xl/relaxed xl:text-2xl/relaxed">
                 Where Vision Meets Business Excellence
@@ -88,7 +88,7 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-3 sm:space-y-4 text-muted-foreground text-base sm:text-lg leading-relaxed">
                 <p>
-                  <span className="text-primary font-semibold">The Execuvision</span> manifests an intelligible & clear perspective of the global business ecosystem, bridging the gap between visionary ideas and strategic execution.
+                  <span className="text-primary font-semibold">The Execuvison</span> manifests an intelligible & clear perspective of the global business ecosystem, bridging the gap between visionary ideas and strategic execution.
                 </p>
                 <p>
                   Our skilled team of analysts and industry experts explore the world of economics with innovative thinking to provide accurate projections and insights. We conduct comprehensive ground research and meticulous data analysis to emerge as your trusted strategic partner in business development.
@@ -121,7 +121,7 @@ export default function AboutPage() {
                 <div className="absolute -z-10 top-4 sm:top-8 left-4 sm:left-8 w-full h-full bg-primary/10 rounded-xl"></div>
                 <img
                   src="/placeholder.svg?height=500&width=600"
-                  alt="The Execuvision Team"
+                  alt="The Execuvison Team"
                   className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full shadow-xl"
                   width={600}
                   height={500}
@@ -211,7 +211,7 @@ export default function AboutPage() {
                 <h3 className="text-xl sm:text-2xl font-bold">Our Mission</h3>
                 <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
                 We empower businesses through precision planning and <span className="text-primary font-medium">actionable intelligence</span> that transforms strategic
-                initiatives into tangible results. <span className="text-primary font-semibold">"The Execuvision"</span> is
+                initiatives into tangible results. <span className="text-primary font-semibold">"The Execuvison"</span> is
                 dedicated to illuminating the path to sustainable growth and operational excellence.
                 </p>
                 <div className="h-0.5 w-12 bg-primary/30 rounded-full mt-1"></div>
@@ -269,7 +269,7 @@ export default function AboutPage() {
           >
             <h2 className="text-2xl sm:text-4xl font-bold tracking-tighter mb-8 sm:mb-12 text-center">
               <span className="relative">
-                Why Choose The Execuvision
+                Why Choose The Execuvison
                 <span className="absolute bottom-0 left-1/4 right-1/4 h-1 bg-gradient-to-r from-transparent via-primary to-transparent"></span>
               </span>
             </h2>
