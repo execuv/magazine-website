@@ -1,9 +1,5 @@
-let userConfig = undefined
-try {
-  userConfig = await import('./v0-user-next.config')
-} catch (e) {
-  // ignore error
-}
+import fs from 'fs';
+import path from 'path';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -21,13 +17,21 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+};
+
+// Attempt to load the user config synchronously
+let userConfig = undefined;
+const userConfigPath = path.resolve('./v0-user-next.config.mjs');
+
+if (fs.existsSync(userConfigPath)) {
+  userConfig = (await import(userConfigPath)).default;
 }
 
-mergeConfig(nextConfig, userConfig)
+mergeConfig(nextConfig, userConfig);
 
 function mergeConfig(nextConfig, userConfig) {
   if (!userConfig) {
-    return
+    return;
   }
 
   for (const key in userConfig) {
@@ -38,14 +42,14 @@ function mergeConfig(nextConfig, userConfig) {
       nextConfig[key] = {
         ...nextConfig[key],
         ...userConfig[key],
-      }
+      };
     } else {
-      nextConfig[key] = userConfig[key]
+      nextConfig[key] = userConfig[key];
     }
   }
 }
 
-export default nextConfig
+export default nextConfig;
 
 export const testConfig = {
   testTimeout: 30000, // 30 seconds
