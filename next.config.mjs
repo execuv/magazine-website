@@ -12,11 +12,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {
-    webpackBuildWorker: true,
-    parallelServerBuildTraces: true,
-    parallelServerCompiles: true,
-  },
 };
 
 // Attempt to load the user config synchronously
@@ -24,7 +19,7 @@ let userConfig = undefined;
 const userConfigPath = path.resolve('./v0-user-next.config.mjs');
 
 if (fs.existsSync(userConfigPath)) {
-  userConfig = (await import(userConfigPath)).default;
+  userConfig = require(userConfigPath).default; // Use require instead of await import
 }
 
 mergeConfig(nextConfig, userConfig);
