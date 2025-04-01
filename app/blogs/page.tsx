@@ -1,48 +1,52 @@
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Footer from "@/components/footer"
-import { data } from "../../public/Blogdatas/Articles"
-import Image from "next/image"
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Footer from "@/components/footer";
+import { data } from "../../public/Blogdatas/Articles";
+import Image from "next/image";
 
 interface BlogPost {
-  id: number
-  title?: string
-  excerpt?: string
-  content?: string
-  date: string
-  author: string
-  authorBio?: string
-  category: string
-  images?: string[]
-  image?: string
-  slug: string
-  readTime?: string
-  tags?: string[]
-  featured?: boolean
+  id: number;
+  title?: string;
+  excerpt?: string;
+  content?: string;
+  date: string;
+  author: string;
+  authorBio?: string;
+  category: string;
+  images?: string[];
+  image?: string;
+  slug: string;
+  readTime?: string;
+  tags?: string[];
+  featured?: boolean;
 }
 
 export default function BlogsPage() {
   // Convert data from Articles.ts to BlogPost format with required fields
-  const blogPosts: BlogPost[] = data.map(post => ({
+  const blogPosts: BlogPost[] = data.map((post) => ({
     id: post.id,
-    title: post.slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+    title: post.slug
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" "),
     excerpt: `This is an excerpt for ${post.slug}. The complete article contains more detailed information.`,
     date: post.date,
     author: post.author,
     authorBio: post.authorBio,
     category: post.category,
-    image: post.images && post.images[0] ? post.images[0] : "/placeholder.svg?height=400&width=600",
+    image: post.images && post.images[0] ? post.images[0] : "/placeholder.svg",
+    images: post.images || [],
     slug: post.slug,
     readTime: post.readTime,
     tags: post.tags,
-    featured: post.id <= 3 // Mark first 3 posts as featured
+    featured: post.id <= 3, // Mark first 3 posts as featured
   }));
 
   // Get the featured post (first in the array)
-  const featuredPost = blogPosts.find((post) => post.featured) || blogPosts[0]
+  const featuredPost = blogPosts.find((post) => post.featured) || blogPosts[0];
   // Get the rest of the posts
-  const regularPosts = blogPosts.filter((post) => post.id !== featuredPost.id)
+  const regularPosts = blogPosts.filter((post) => post.id !== featuredPost.id);
 
   return (
     <>
@@ -64,12 +68,13 @@ export default function BlogsPage() {
             <div className="group relative overflow-hidden rounded-lg border">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="aspect-video overflow-hidden md:aspect-auto md:h-full">
-                  <img
+                  <Image
                     src={featuredPost.image || "/placeholder.svg"}
-                    alt={featuredPost.title}
+                    alt={featuredPost.title || ""}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     width={600}
                     height={400}
+                    priority
                   />
                 </div>
                 <div className="flex flex-col justify-center p-6">
@@ -122,17 +127,23 @@ export default function BlogsPage() {
               </div>
             </div>
           </div>
-          
+
           {/* Filter Categories */}
           <div className="flex flex-wrap gap-4 mb-8 justify-center">
             <Button variant="outline" className="rounded-full">
               All Categories
             </Button>
-            {Array.from(new Set(blogPosts.map(post => post.category))).map(category => (
-              <Button key={category} variant="outline" className="rounded-full">
-                {category}
-              </Button>
-            ))}
+            {Array.from(new Set(blogPosts.map((post) => post.category))).map(
+              (category) => (
+                <Button
+                  key={category}
+                  variant="outline"
+                  className="rounded-full"
+                >
+                  {category}
+                </Button>
+              )
+            )}
           </div>
 
           {/* Regular Posts */}
@@ -143,9 +154,9 @@ export default function BlogsPage() {
                 className="group flex flex-col overflow-hidden rounded-lg border"
               >
                 <div className="aspect-video overflow-hidden">
-                  <img
+                  <Image
                     src={post.image || "/placeholder.svg"}
-                    alt={post.title}
+                    alt={post.title || ""}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     width={600}
                     height={400}
@@ -271,5 +282,5 @@ export default function BlogsPage() {
       </div>
       <Footer />
     </>
-  )
+  );
 }
