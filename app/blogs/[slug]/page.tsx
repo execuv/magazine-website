@@ -29,12 +29,12 @@ async function getMarkdownContent(contentPath: string) {
   try {
     const filePath = path.join(process.cwd(), 'public', contentPath.replace(/^\//, ''))
     console.log('Attempting to read file:', filePath)
-    
+
     if (!fs.existsSync(filePath)) {
       console.error('File not found:', filePath)
       throw new Error('File not found')
     }
-    
+
     const fileContent = fs.readFileSync(filePath, 'utf8')
     const { content } = matter(fileContent)
     return marked(content)
@@ -48,10 +48,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   try {
     // Normalize the slug to match exactly with the data
     const normalizedSlug = params.slug.toLowerCase().trim()
-    
+
     // Find the post with the matching slug
     const postData = data.find(post => post.slug.toLowerCase() === normalizedSlug)
-    
+
     if (!postData) {
       console.error('Post not found for slug:', params.slug)
       throw new Error('Post not found')
@@ -59,12 +59,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
     // Get content from markdown file
     const content = await getMarkdownContent(postData.content)
-    
+
     // Use the title from the Articles.ts data
-    const title = postData.title || postData.slug.split('-').map(word => 
+    const title = postData.title || postData.slug.split('-').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ')
-    
+
     // Create post object with all required fields
     const post: BlogPost = {
       ...postData,
@@ -72,7 +72,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       content: content,
       image: postData.images?.[0] || "/placeholder.svg?height=600&width=1200"
     }
-    
+
     // Related posts - get posts with same category
     const relatedPosts = data
       .filter(item => item.category === post.category && item.id !== post.id)
