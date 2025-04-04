@@ -41,39 +41,6 @@ export default function AdminPage() {
   })
   const [editingMagazine, setEditingMagazine] = useState<Magazine | null>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [logo, setLogo] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0] || null;
-    setLogo(selectedFile);
-
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
-    } else {
-      setLogoPreview(null);
-    }
-  };
-
-  const handleLogoUpload = async () => {
-    if (!logo) {
-      toast.error("Please select a logo to upload.");
-      return;
-    }
-
-    try {
-      // Simulate logo upload
-      toast.success("Logo updated successfully!");
-      setLogo(null);
-      setLogoPreview(null);
-    } catch (error) {
-      toast.error("Failed to update logo.");
-    }
-  };
 
   const handleAddPreviewImage = () => {
     setNewMagazine({
@@ -242,65 +209,7 @@ export default function AdminPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
-      {/* Logo Update Section */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Update Site Logo</h2>
-        <div className="flex items-center gap-4">
-          {logoPreview ? (
-            <img
-              src={logoPreview}
-              alt="Logo Preview"
-              className="w-24 h-24 object-contain border rounded"
-            />
-          ) : (
-            <div className="w-24 h-24 flex items-center justify-center border rounded bg-gray-100">
-              <span className="text-gray-500">No Logo</span>
-            </div>
-          )}
-          <div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleLogoChange}
-              className="mb-2"
-            />
-            <Button
-              onClick={handleLogoUpload}
-              disabled={!logo}
-              // variant="primary"
-            >
-              Upload Logo
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Quick Navigation</h2>
-        <div className="flex gap-4">
-          <Button
-            onClick={() => router.push("/admin/addMagazines")}
-            variant="outline"
-          >
-            Add Magazines
-          </Button>
-          <Button
-            onClick={() => router.push("/admin/addArticles")}
-            variant="outline"
-          >
-            Add Articles
-          </Button>
-          <Button
-            onClick={() => router.push("/admin/orders")}
-            variant="outline"
-          >
-            View Orders
-          </Button>
-        </div>
-      </div>
-
-      {/* <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-2 gap-8">
         <div>
           <h2 className="text-2xl font-semibold mb-4">{formTitle}</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -606,7 +515,7 @@ export default function AdminPage() {
             ))}
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   )
 }

@@ -73,10 +73,9 @@ export default async function BlogPreview() {
                       </h3>
                     </div>
                     <div className="">
-
-                    <ReactMarkdown>
-                    {post.content.slice(0,10)}
-                    </ReactMarkdown>
+                      <ReactMarkdown>
+                        {post.content.slice(0, 100) + (post.content.length > 100 ? "..." : "")}
+                      </ReactMarkdown>
                     </div>
                   </div>
                   <div className="pt-4">

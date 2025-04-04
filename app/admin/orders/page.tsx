@@ -80,9 +80,9 @@ export default function AdminOrdersPage() {
       case "processing":
         return "secondary"
       case "shipped":
-        return "primary"
+        return "secondary"
       case "delivered":
-        return "success"
+        return "default"
       default:
         return "outline"
     }
