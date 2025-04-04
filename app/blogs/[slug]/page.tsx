@@ -46,24 +46,24 @@ async function getMarkdownContent(contentPath: string) {
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   try {
-    // Normalize the slug to match exactly with the data
-    const normalizedSlug = params.slug.toLowerCase().trim()
+    // Parse the slug as the article ID
+    const articleId = params;
 
-    // Find the post with the matching slug
-    const postData = data.find(post => post.slug.toLowerCase() === normalizedSlug)
+    // Find the post with the matching ID
+    const postData = data.find(post => post.id.toString() === articleId);
 
     if (!postData) {
-      console.error('Post not found for slug:', params.slug)
-      throw new Error('Post not found')
+      console.error('Post not found for ID:', articleId);
+      throw new Error('Post not found');
     }
 
     // Get content from markdown file
-    const content = await getMarkdownContent(postData.content)
+    const content = await getMarkdownContent(postData.content);
 
     // Use the title from the Articles.ts data
     const title = postData.title || postData.slug.split('-').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ')
+    ).join(' ');
 
     // Create post object with all required fields
     const post: BlogPost = {
@@ -71,7 +71,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       title: title,
       content: content,
       image: postData.images?.[0] || "/placeholder.svg?height=600&width=1200"
-    }
+    };
 
     // Related posts - get posts with same category
     const relatedPosts = data

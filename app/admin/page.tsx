@@ -68,8 +68,8 @@ export default function AdminPage() {
   useEffect(() => {
     // Redirect if not admin
     if (!userLoggedIn || currentUser?.email !== "admin@example.com") {
-      router.push("/")
-      return
+      // router.push("/")
+      // return
     }
 
     const loadMagazines = async () => {

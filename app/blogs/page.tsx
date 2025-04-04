@@ -2,8 +2,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/footer";
-import { data } from "../../public/Blogdatas/Articles";
 import Image from "next/image";
+import { getAllArticles } from "@/firebase/firestore";
+import ReactMarkdown from "react-markdown";
 
 interface BlogPost {
   id: number;
@@ -22,30 +23,24 @@ interface BlogPost {
   featured?: boolean;
 }
 
-export default function BlogsPage() {
-  // Convert data from Articles.ts to BlogPost format with required fields
-  const blogPosts: BlogPost[] = data.map((post) => ({
-    id: post.id,
-    title: post.slug
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" "),
-    excerpt: `This is an excerpt for ${post.slug}. The complete article contains more detailed information.`,
-    date: post.date,
-    author: post.author,
-    authorBio: post.authorBio,
-    category: post.category,
-    image: post.images && post.images[0] ? post.images[0] : "/placeholder.svg",
-    images: post.images || [],
-    slug: post.slug,
-    readTime: post.readTime,
-    tags: post.tags,
-    featured: post.id <= 3, // Mark first 3 posts as featured
+export default async function BlogsPage() {
+  const articles = await getAllArticles(); // Fetch articles from Firestore
+
+  const blogPosts: BlogPost[] = articles.map((article, index) => ({
+    id: article.id, // Use the actual ID from Firestore
+    title: article.title,
+    excerpt: article.content.slice(0, 100) + "...", // Generate an excerpt
+    date: article.createdAt?.toDate().toLocaleDateString() || "Unknown Date",
+    author: "Admin", // Replace with actual author if available
+    category: article.category,
+    image: article.imageUrl || "/placeholder.svg",
+    slug: article.id.toString(), // Use the ID as the slug
+    readTime: article.readingTime ? `${article.readingTime} min read` : "N/A",
+    content: article.content, // Include full content
+    featured: index === 0, // Mark the first article as featured
   }));
 
-  // Get the featured post (first in the array)
   const featuredPost = blogPosts.find((post) => post.featured) || blogPosts[0];
-  // Get the rest of the posts
   const regularPosts = blogPosts.filter((post) => post.id !== featuredPost.id);
 
   return (
@@ -97,9 +92,9 @@ export default function BlogsPage() {
                         </Link>
                       </h2>
                     </div>
-                    <p className="text-muted-foreground">
-                      {featuredPost.excerpt}
-                    </p>
+                    <ReactMarkdown >
+                      {featuredPost.content}
+                    </ReactMarkdown>
                     <div className="flex items-center gap-2">
                       <div className="h-10 w-10 overflow-hidden rounded-full bg-muted">
                         <img
@@ -179,7 +174,9 @@ export default function BlogsPage() {
                         </Link>
                       </h3>
                     </div>
-                    <p className="text-muted-foreground">{post.excerpt}</p>
+                    <ReactMarkdown>
+                      {post.content}
+                    </ReactMarkdown>
                   </div>
                   <div className="pt-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -196,7 +193,7 @@ export default function BlogsPage() {
                       <span className="text-sm">{post.author}</span>
                     </div>
                     <Link
-                      href={`/blogs/${post.slug}`}
+                      href={`/blogs/${post.id}`}
                       className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
                     >
                       Read more <ArrowRight className="h-4 w-4" />
