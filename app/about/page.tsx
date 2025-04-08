@@ -120,7 +120,7 @@ export default function AboutPage() {
               <div className="relative">
                 <div className="absolute -z-10 top-4 sm:top-8 left-4 sm:left-8 w-full h-full bg-primary/10 rounded-xl"></div>
                 <img
-                  src="/placeholder.svg?height=500&width=600"
+                  src="https://images.unsplash.com/photo-1579389083078-4e7018379f7e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=500&q=80"
                   alt="The Execuvison Team"
                   className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full shadow-xl"
                   width={600}

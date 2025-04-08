@@ -29,7 +29,7 @@ export default function WhoWeArePreview() {
           <div className="flex justify-center lg:justify-end">
             <div className="relative">
               <img
-                src="/placeholder.svg?height=500&width=600"
+                src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=500&q=80"
                 alt="Our team working together"
                 className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
                 width={600}

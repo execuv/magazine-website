@@ -31,7 +31,7 @@ export default function Hero() {
           <div className="mx-auto lg:ml-auto flex items-center justify-center">
             <div className="relative">
               <img
-                src="/placeholder.svg?height=600&width=450"
+                src="https://images.unsplash.com/photo-1542871793-fd7e2b3cd0b8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fG1hZ2F6aW5lfGVufDB8fDB8fHww"
                 alt="Magazine cover showcase"
                 className="rounded-lg shadow-2xl"
                 width={450}
