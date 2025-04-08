@@ -28,7 +28,7 @@ export default function ClientReviewsPreview() {
       id: 1,
       name: "Alex Johnson",
       role: "Designer",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
       rating: 5,
       content:
         "The quality of these magazines is exceptional. The content is always relevant and the design is stunning. I've been a subscriber for over a year now and I'm never disappointed.",
@@ -37,7 +37,7 @@ export default function ClientReviewsPreview() {
       id: 2,
       name: "Sarah Williams",
       role: "Marketing Director",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
       rating: 5,
       content:
         "These PDF magazines have become an essential resource for our team. The insights and case studies have directly influenced our strategies and improved our results.",
@@ -46,7 +46,7 @@ export default function ClientReviewsPreview() {
       id: 3,
       name: "Michael Chen",
       role: "Entrepreneur",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "https://randomuser.me/api/portraits/men/22.jpg",
       rating: 4,
       content:
         "I appreciate the convenience of having high-quality content available in PDF format. The magazines are well-researched and beautifully designed. Great value for money.",
@@ -55,7 +55,7 @@ export default function ClientReviewsPreview() {
       id: 4,
       name: "Emily Rodriguez",
       role: "Content Creator",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "https://randomuser.me/api/portraits/women/28.jpg",
       rating: 5,
       content:
         "As a content creator, I find these magazines incredibly inspiring. They're a goldmine of ideas and keep me updated with the latest trends in my industry.",
@@ -64,7 +64,7 @@ export default function ClientReviewsPreview() {
       id: 5,
       name: "David Kim",
       role: "Tech Enthusiast",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "https://randomuser.me/api/portraits/men/41.jpg",
       rating: 4,
       content:
         "The tech magazines are my go-to source for in-depth analysis of the latest innovations. The writers really know their stuff and present complex topics in an accessible way.",
@@ -73,7 +73,7 @@ export default function ClientReviewsPreview() {
       id: 6,
       name: "Laura Thompson",
       role: "Lifestyle Blogger",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "https://randomuser.me/api/portraits/women/57.jpg",
       rating: 5,
       content:
         "I love the variety of topics covered in these magazines. From fashion to travel, they always have something interesting that aligns with my blog's focus.",
