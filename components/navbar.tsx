@@ -47,10 +47,15 @@ export default function Navbar() {
   const userInitial = currentUser?.email?.charAt(0).toUpperCase() || "U"
 
   const navItems = [
-    { title: "Home", href: "/" },
-    { title: "Magazines", href: "/magazines" },
-    { title: "About", href: "/about" },
-    { title: "Contact", href: "/contact" },
+    // { title: "Home", href: "/" },
+    // { title: "Magazines", href: "/magazines" },
+    // { title: "About", href: "/about" },
+    // { title: "Contact", href: "/contact" },
+
+    { title: "Advertise With Us", href: "/advertise" },
+    { title: "Press Release", href: "/pressrelease" },
+    { title: "Interview", href: "/interviews" },
+    { title: "Blogs", href: "/blogs" },
   ]
 
   return (
